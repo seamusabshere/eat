@@ -1,0 +1,3 @@
+module Eat
+  # Your code goes here...
+end
