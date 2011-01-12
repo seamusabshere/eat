@@ -1,7 +1,8 @@
 require 'uri'
 
 module Eat
-  def eat(filesystem_path_or_uri, remote_timeout = 5)
+  TIMEOUT = 2 # seconds
+  def eat(filesystem_path_or_uri)
     uri = ::URI.parse filesystem_path_or_uri
     case uri.scheme
     when nil
@@ -13,14 +14,14 @@ module Eat
     when 'http', 'https'
       require 'net/http'
       require 'net/https' if uri.scheme == 'https'
-      (defined?(::SystemTimer) ? ::SystemTimer : ::Timeout).timeout(remote_timeout) do
+      (defined?(::SystemTimer) ? ::SystemTimer : ::Timeout).timeout(::Eat::TIMEOUT) do
         http = ::Net::HTTP.new uri.host, uri.port
         if uri.scheme == 'https'
           http.use_ssl = true
           # if you were trying to be real safe, you wouldn't use this library
           http.verify_mode = ::OpenSSL::SSL::VERIFY_NONE
         end
-        http.request ::Net::HTTP::Get.new(uri.request_uri)
+        http.start { |session| session.get uri.request_uri }
       end.body
     end
   end

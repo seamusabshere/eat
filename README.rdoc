@@ -15,7 +15,7 @@ Try
 ==Supported schemas
 
 * local filesystem (it will try to use <tt>sudo</tt> if it can't read the file)
-* http (the default timeout is 5 seconds)
+* http (the timeout is 2 seconds)
 * https (it won't check the SSL certificate... if you want security, don't use this!)
 
 Copyright 2011 Seamus Abshere
