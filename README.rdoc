@@ -1,0 +1,21 @@
+=eat
+
+Instead of
+
+    require 'open-uri'
+    open('http://169.254.169.254/latest/meta-data/security-groups').gets
+    open('/home/seamus/foo.txt').gets
+
+Try
+
+    require 'eat'
+    eat('http://169.254.169.254/latest/meta-data/security-groups')
+    eat('/home/seamus/foo.txt')
+
+==Supported schemas
+
+* local filesystem (it will try to use <tt>sudo</tt> if it can't read the file)
+* http (the default timeout is 5 seconds)
+* https (it won't check the SSL certificate... if you want security, don't use this!)
+
+Copyright 2011 Seamus Abshere
