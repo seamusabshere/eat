@@ -9,6 +9,10 @@ class Tempfile
 end
 
 class TestEat < Test::Unit::TestCase
+  def setup
+    ::Eat.config.remote_timeout = 10
+  end
+  
   def test_filesystem
     assert eat(__FILE__).include?('class TestEat < Test::Unit::TestCase')
   end

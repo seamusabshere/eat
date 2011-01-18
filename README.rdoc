@@ -12,6 +12,10 @@ Try
     eat('http://169.254.169.254/latest/meta-data/security-groups')
     eat('/home/seamus/foo.txt')
 
+==Global configuration
+
+    ::Eat.config.remote_timeout = 10 #seconds
+
 ==Supported schemas
 
 * local filesystem (it will try to use <tt>sudo</tt> if it can't read the file)
