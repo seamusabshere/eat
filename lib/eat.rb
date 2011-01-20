@@ -22,7 +22,7 @@ module Eat
         if ::File.readable? uri.path
           ::IO.read uri.path
         else
-          `sudo cat #{uri.path}`
+          `sudo /bin/cat #{uri.path}`
         end
       when 'http', 'https'
         require 'net/http'
