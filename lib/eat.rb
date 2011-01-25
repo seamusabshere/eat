@@ -20,7 +20,7 @@ module Eat
       case uri.scheme
       when nil
         if ::File.readable? uri.path
-          ::IO.read uri.path
+          ::File.read uri.path
         else
           `sudo /bin/cat #{uri.path}`
         end
@@ -41,4 +41,4 @@ module Eat
   end
 end
 
-::Object.send :include, ::Eat::ObjectExtensions
+::Object.send(:include, ::Eat::ObjectExtensions) unless ::Object.method_defined?(:eat)
