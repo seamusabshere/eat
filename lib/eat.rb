@@ -18,7 +18,7 @@ module Eat
     def eat(filesystem_path_or_uri)
       uri = ::URI.parse filesystem_path_or_uri
       case uri.scheme
-      when nil
+      when 'file', nil
         if ::File.readable? uri.path
           ::File.read uri.path
         else

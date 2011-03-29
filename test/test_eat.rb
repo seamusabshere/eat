@@ -17,6 +17,10 @@ class TestEat < Test::Unit::TestCase
     assert eat(__FILE__).include?('class TestEat < Test::Unit::TestCase')
   end
   
+  def test_filesystem_uri
+    assert eat("file://#{File.expand_path(__FILE__)}").include?('class TestEat < Test::Unit::TestCase')
+  end
+  
   def test_http
     assert eat('http://brighterplanet.com/robots.txt').include?('User-agent')
   end
