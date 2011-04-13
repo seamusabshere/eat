@@ -16,7 +16,7 @@ module Eat
   
   module ObjectExtensions
     def eat(filesystem_path_or_uri)
-      uri = ::URI.parse filesystem_path_or_uri
+      uri = ::URI.parse filesystem_path_or_uri.to_s
       case uri.scheme
       when 'file', nil
         if ::File.readable? uri.path
