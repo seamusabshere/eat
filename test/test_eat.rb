@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 require 'helper'
 
 require 'tempfile'
@@ -9,10 +10,6 @@ class Tempfile
 end
 
 class TestEat < Test::Unit::TestCase
-  def setup
-    ::Eat.config.remote_timeout = 10
-  end
-  
   def test_filesystem
     assert eat(__FILE__).include?('class TestEat < Test::Unit::TestCase')
   end
@@ -22,27 +19,15 @@ class TestEat < Test::Unit::TestCase
   end
   
   def test_uri
-    assert eat(::URI.parse('http://brighterplanet.com/robots.txt')).include?('User-agent')
+    assert eat(::URI.parse('http://brighterplanet.com/robots.txt'), :timeout => 10).include?('User-agent')
   end
   
   def test_http
-    assert eat('http://brighterplanet.com/robots.txt').include?('User-agent')
+    assert eat('http://brighterplanet.com/robots.txt', :timeout => 10).include?('User-agent')
   end
   
   def test_https
-    assert eat('https://brighterplanet.com/robots.txt').include?('User-agent')
-  end
-  
-  def test_sudo_filesystem
-    f = File.open('test_sudo_filesystem.txt', 'w')
-    f.write "hello world"
-    f.close
-    `sudo chown root #{f.path}`
-    `sudo chmod go-rwx #{f.path}`
-    assert !File.readable?(f.path)
-    assert eat(f.path).include?('hello world')
-  ensure
-    `sudo rm -f #{f.path}`
+    assert eat('https://brighterplanet.com/robots.txt', :timeout => 10).include?('User-agent')
   end
   
   def test_openuri_uses_tempfile
@@ -54,7 +39,17 @@ class TestEat < Test::Unit::TestCase
   
   def test_eat_doesnt_use_tempfile
     assert_nothing_raised do
-      eat 'http://do1ircpq72156.cloudfront.net/0.2.47/javascripts/prototype.rails-3.0.3.js'
+      eat 'http://do1ircpq72156.cloudfront.net/0.2.47/javascripts/prototype.rails-3.0.3.js', :timeout => 10
     end
+  end
+
+  def test_limit_on_local_files
+    assert_equal '# -', eat(__FILE__, :limit => 3)
+    assert_equal '# -*-', eat(__FILE__, :limit => 5)
+  end
+    
+  def test_limit_on_remote_files
+    assert_equal 'Use', eat(::URI.parse('http://brighterplanet.com/robots.txt'), :timeout => 10, :limit => 3)
+    assert_equal 'User-', eat(::URI.parse('http://brighterplanet.com/robots.txt'), :timeout => 10, :limit => 5)
   end
 end

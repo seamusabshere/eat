@@ -1,0 +1,5 @@
+0.1.0
+* no longer tries to open file with sudo if it gets a permission error
+* remove Eat::Config.timeout global option
+* add :timeout option example: eat(x, :timeout => y)
+* add :limit option example: eat(x, :limit => y)

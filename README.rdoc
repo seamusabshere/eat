@@ -1,25 +1,33 @@
 =eat
 
-Instead of
+Problems with the standard <tt>open-uri</tt> library
 
-    require 'open-uri'
-    open('http://169.254.169.254/latest/meta-data/security-groups').gets
-    open('/home/seamus/foo.txt').gets
+* sometimes it returns <tt>String</tt> and sometimes <tt>StringIO</tt> (check out <tt>OpenURI::Buffer::StringMax</tt>, usually 10,240 bytes)
+* sometimes you have to call <tt>gets</tt> (for example <tt>open('http://yahoo.com').gets</tt>)
+* it overrides <tt>#open</tt> everywhere, which may be confusing.
 
-Try
+Try <tt>#eat</tt>, which ALWAYS returns a <tt>String</tt>:
 
     require 'eat'
-    eat('http://169.254.169.254/latest/meta-data/security-groups')
-    eat('/home/seamus/foo.txt')
+    eat('http://yahoo.com')                 #=> String
+    eat('/home/seamus/foo.txt')             #=> String
+    eat('file:///home/seamus/foo.txt')      #=> String
 
-==Global configuration
+==Options
 
-    ::Eat.config.remote_timeout = 10 #seconds
+    eat('http://yahoo.com', :timeout => 10)  # timeout after 10 seconds
+    eat('http://yahoo.com', :limit => 1024)  # only read the first 1024 chars
+
+==Warning: doesn't verify SSL certs
+
+If you need to check SSL certificates, please don't use this gem. It always sets
+
+    http.verify_mode = ::OpenSSL::SSL::VERIFY_NONE
 
 ==Supported schemas
 
-* local filesystem (it will try to use <tt>sudo</tt> if it can't read the file)
-* http (the timeout is 2 seconds)
+* local filesystem
+* http
 * https (it won't check the SSL certificate... if you want security, don't use this!)
 
 Copyright 2011 Seamus Abshere
