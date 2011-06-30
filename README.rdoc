@@ -15,9 +15,9 @@ Try <tt>#eat</tt>, which ALWAYS returns a <tt>String</tt>:
 
 ==Options
 
-    eat('http://yahoo.com', :timeout => 10)                  # timeout after 10 seconds
-    eat('http://yahoo.com', :limit => 1024)                  # only read the first 1024 chars
-    eat('https://yahoo.com', :openssl_verify_mode => 'none)  # don't bother verifying SSL certificate
+    eat('http://yahoo.com', :timeout => 10)                   # timeout after 10 seconds
+    eat('http://yahoo.com', :limit => 1024)                   # only read the first 1024 chars
+    eat('https://yahoo.com', :openssl_verify_mode => 'none')  # don't bother verifying SSL certificate
 
 ==Warning: DOES verify SSL certs
 
