@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Seamus Abshere"]
   s.email       = ["seamus@abshere.net"]
   s.homepage    = "https://github.com/seamusabshere/eat"
-  s.summary     = %q{A more trustworthy open-uri for use with RSS feeds, config scripts, etc.}
-  s.description = %q{Lets you open local and remote files by immediately returning their contents as a string.}
+  s.summary     = %q{Defines an #eat method that takes local and remote paths and returns the contents it finds there as a String. Like open-uri but with fewer weirdnesses (and it doesn't override #open).}
+  s.description = %q{A (better?) replacement for open-uri. Gets the contents of local and remote files as a String, no questions asked.}
 
   s.rubyforge_project = "eat"
 
