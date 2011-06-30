@@ -13,6 +13,7 @@ module Eat
     # Options:
     # * <tt>:timeout</tt> in seconds
     # * <tt>:limit</tt> is characters (bytes in Ruby 1.8)
+    # * <tt>:openssl_verify_mode</tt> set to 'none' if you don't want to verify SSL certificates
     #
     # Example:
     #    eat('http://brighterplanet.com')                 #=> '...'
@@ -21,6 +22,8 @@ module Eat
     def eat(url, options = {})
       timeout = options[:timeout] || options['timeout'] || 2
       limit = options[:limit] || options['limit'] || ::Infinity
+      openssl_verify_mode = options[:openssl_verify_mode] || options['openssl_verify_mode']
+      
       uri = ::URI.parse url.to_s
 
       body = []
@@ -45,8 +48,7 @@ module Eat
           http = ::Net::HTTP.new uri.host, uri.port
           if uri.scheme == 'https'
             http.use_ssl = true
-            # if you were trying to be real safe, you wouldn't use this library
-            http.verify_mode = ::OpenSSL::SSL::VERIFY_NONE
+            http.verify_mode = ::OpenSSL::SSL::VERIFY_NONE if openssl_verify_mode.to_s == 'none'
           end
           http.start do |session|
             catch :stop do

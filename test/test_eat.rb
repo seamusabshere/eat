@@ -52,4 +52,22 @@ class TestEat < Test::Unit::TestCase
     assert_equal 'Use', eat(::URI.parse('http://brighterplanet.com/robots.txt'), :timeout => 10, :limit => 3)
     assert_equal 'User-', eat(::URI.parse('http://brighterplanet.com/robots.txt'), :timeout => 10, :limit => 5)
   end
+  
+  def test_ssl
+    assert_nothing_raised do
+      eat 'https://brighterplanet.com'
+    end    
+  end
+  
+  def test_openssl_verify_on_by_default
+    assert_raises(OpenSSL::SSL::SSLError) do
+      eat 'https://foo.bar.brighterplanet.com'
+    end
+  end
+  
+  def test_disable_openssl_verify
+    assert_nothing_raised do
+      eat 'https://foo.bar.brighterplanet.com', :openssl_verify_mode => 'none'
+    end
+  end
 end

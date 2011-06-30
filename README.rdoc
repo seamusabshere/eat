@@ -15,19 +15,22 @@ Try <tt>#eat</tt>, which ALWAYS returns a <tt>String</tt>:
 
 ==Options
 
-    eat('http://yahoo.com', :timeout => 10)  # timeout after 10 seconds
-    eat('http://yahoo.com', :limit => 1024)  # only read the first 1024 chars
+    eat('http://yahoo.com', :timeout => 10)                  # timeout after 10 seconds
+    eat('http://yahoo.com', :limit => 1024)                  # only read the first 1024 chars
+    eat('https://yahoo.com', :openssl_verify_mode => 'none)  # don't bother verifying SSL certificate
 
-==Warning: doesn't verify SSL certs
+==Warning: DOES verify SSL certs
 
-If you need to check SSL certificates, please don't use this gem. It always sets
+If you want to disable verification of SSL certificates, use
 
-    http.verify_mode = ::OpenSSL::SSL::VERIFY_NONE
+  :openssl_verify_mode => 'none'
+
+Thanks @codahale and @peterc for their suggestions.
 
 ==Supported schemas
 
 * local filesystem
 * http
-* https (it won't check the SSL certificate... if you want security, don't use this!)
+* https
 
 Copyright 2011 Seamus Abshere
