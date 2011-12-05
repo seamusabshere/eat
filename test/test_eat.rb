@@ -70,4 +70,8 @@ class TestEat < Test::Unit::TestCase
       eat 'https://foo.bar.brighterplanet.com', :openssl_verify_mode => 'none'
     end
   end
+  
+  def test_reads_compressed
+    assert eat('http://www.sears.com/shc/s/p_10153_12605_07692286000P?prdNo=8&blockNo=8&blockType=G8').include?('New Balance')
+  end
 end

@@ -1,5 +1,4 @@
 require 'uri'
-require 'singleton'
 
 # http://weblog.jamisbuck.org/2007/2/7/infinity
 unless defined?(::Infinity)
@@ -20,9 +19,7 @@ module Eat
     #    eat('http://brighterplanet.com', :timeout => 10) #=> '...'
     #    eat('http://brighterplanet.com', :limit => 1)    #=> '.'
     def eat(url, options = {})
-      timeout = options[:timeout] || options['timeout'] || 2
-      limit = options[:limit] || options['limit'] || ::Infinity
-      openssl_verify_mode = options[:openssl_verify_mode] || options['openssl_verify_mode']
+      limit = options.fetch(:limit, ::Infinity)
       
       uri = ::URI.parse url.to_s
 
@@ -42,26 +39,25 @@ module Eat
         end
 
       when 'http', 'https'
-        require 'net/http'
-        require 'net/https' if uri.scheme == 'https'
-        (defined?(::SystemTimer) ? ::SystemTimer : ::Timeout).timeout(timeout) do
-          http = ::Net::HTTP.new uri.host, uri.port
-          if uri.scheme == 'https'
-            http.use_ssl = true
-            http.verify_mode = ::OpenSSL::SSL::VERIFY_NONE if openssl_verify_mode.to_s == 'none'
-          end
-          http.start do |session|
-            catch :stop do
-              session.get(uri.request_uri, 'Accept-Encoding' => '') do |chunk|
-                throw :stop if read_so_far > limit
-                read_so_far += chunk.length
-                body << chunk
-              end
-              session.finish
-            end
+        require 'httpclient'
+        timeout = options.fetch(:timeout, 2)
+        openssl_verify_mode = options.fetch(:openssl_verify_mode, ::OpenSSL::SSL::VERIFY_PEER)
+        if openssl_verify_mode == 'none'
+          openssl_verify_mode = ::OpenSSL::SSL::VERIFY_NONE
+        end
+        http = ::HTTPClient.new
+        http.redirect_uri_callback = ::Proc.new { |uri, res| ::URI.parse(res.header['location'][0]) }
+        http.receive_timeout = timeout
+        if uri.scheme == 'https'
+          http.ssl_config.verify_mode = openssl_verify_mode
+        end
+        catch :stop do
+          http.get_content(uri.to_s) do |chunk|
+            throw :stop if read_so_far > limit
+            read_so_far += chunk.length
+            body << chunk
           end
         end
-
       end
 
       limit == ::Infinity ? body.join : body.join[0...limit]
