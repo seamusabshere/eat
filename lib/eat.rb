@@ -47,15 +47,16 @@ module Eat
         end
         http = ::HTTPClient.new
         http.redirect_uri_callback = ::Proc.new { |uri, res| ::URI.parse(res.header['location'][0]) }
+        http.transparent_gzip_decompression = true
         http.receive_timeout = timeout
         if uri.scheme == 'https'
           http.ssl_config.verify_mode = openssl_verify_mode
         end
         catch :stop do
           http.get_content(uri.to_s) do |chunk|
-            throw :stop if read_so_far > limit
-            read_so_far += chunk.length
             body << chunk
+            read_so_far += chunk.length
+            throw :stop if read_so_far > limit
           end
         end
       end

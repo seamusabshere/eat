@@ -74,4 +74,8 @@ class TestEat < Test::Unit::TestCase
   def test_reads_compressed
     assert eat('http://www.sears.com/shc/s/p_10153_12605_07692286000P?prdNo=8&blockNo=8&blockType=G8').include?('New Balance')
   end
+  
+  def test_chunks_work_out
+    assert eat('http://www.thinkgeek.com/interests/giftsforhim/60b6/').include?('DOCTYPE HTML PUBLIC')
+  end
 end
