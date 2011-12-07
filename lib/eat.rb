@@ -1,6 +1,8 @@
 require 'uri'
 require 'httpclient'
 
+require 'eat/version'
+
 # http://weblog.jamisbuck.org/2007/2/7/infinity
 unless defined?(::Infinity)
   ::Infinity = 1.0/0
