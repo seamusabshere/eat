@@ -3,15 +3,13 @@ require 'httpclient'
 
 require 'eat/version'
 
-# http://weblog.jamisbuck.org/2007/2/7/infinity
-unless defined?(::Infinity)
-  ::Infinity = 1.0/0
-end
-
 module Eat
   # httpclient 2.2.3 inserts the platform info for you, albeit with problems
   # AGENT_NAME = "Mozilla/5.0 (#{::RUBY_PLATFORM}) Ruby/#{::RUBY_VERSION} HTTPClient/#{::HTTPClient::VERSION} eat/#{::Eat::VERSION}"
   AGENT_NAME = "eat/#{::Eat::VERSION}"
+  
+  # http://weblog.jamisbuck.org/2007/2/7/infinity  
+  INFINITY = 1.0/0
 
   module ObjectExtensions
     # <tt>url</tt> can be filesystem or http/https
@@ -26,7 +24,7 @@ module Eat
     #    eat('http://brighterplanet.com', :timeout => 10) #=> '...'
     #    eat('http://brighterplanet.com', :limit => 1)    #=> '.'
     def eat(url, options = {})
-      limit = options.fetch(:limit, ::Infinity)
+      limit = options.fetch(:limit, INFINITY)
       
       uri = ::URI.parse url.to_s
 
@@ -59,7 +57,7 @@ module Eat
         if uri.scheme == 'https'
           http.ssl_config.verify_mode = openssl_verify_mode
         end
-        if limit == ::Infinity
+        if limit == INFINITY
           body << http.get_content(uri.to_s)
         else
           catch :stop do
@@ -72,7 +70,7 @@ module Eat
         end
       end
 
-      limit == ::Infinity ? body.join : body.join[0...limit]
+      limit == INFINITY ? body.join : body.join[0...limit]
     end
   end
 end
