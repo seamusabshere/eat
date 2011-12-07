@@ -1,4 +1,5 @@
 require 'uri'
+require 'httpclient'
 
 # http://weblog.jamisbuck.org/2007/2/7/infinity
 unless defined?(::Infinity)
@@ -7,6 +8,8 @@ end
 
 module Eat
   module ObjectExtensions
+    AGENT_NAME = "Mozilla/5.0 (#{::RUBY_PLATFORM}) Ruby/#{::RUBY_VERSION} HTTPClient/#{::HTTPClient::VERSION} eat/#{::Eat::VERSION}"
+    
     # <tt>url</tt> can be filesystem or http/https
     #
     # Options:
@@ -39,13 +42,13 @@ module Eat
         end
 
       when 'http', 'https'
-        require 'httpclient'
         timeout = options.fetch(:timeout, 2)
         openssl_verify_mode = options.fetch(:openssl_verify_mode, ::OpenSSL::SSL::VERIFY_PEER)
         if openssl_verify_mode == 'none'
           openssl_verify_mode = ::OpenSSL::SSL::VERIFY_NONE
         end
         http = ::HTTPClient.new
+        http.agent_name = AGENT_NAME
         http.redirect_uri_callback = ::Proc.new { |uri, res| ::URI.parse(res.header['location'][0]) }
         http.transparent_gzip_decompression = true
         http.receive_timeout = timeout

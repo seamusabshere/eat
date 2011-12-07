@@ -78,4 +78,8 @@ class TestEat < Test::Unit::TestCase
   def test_chunks_work_out
     assert eat('http://www.thinkgeek.com/interests/giftsforhim/60b6/').include?('DOCTYPE HTML PUBLIC')
   end
+  
+  def test_satisfies_sites_that_require_user_agent
+    assert eat('http://www.bestbuy.com').include?('images.bestbuy.com')
+  end
 end
