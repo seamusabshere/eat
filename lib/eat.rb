@@ -9,9 +9,11 @@ unless defined?(::Infinity)
 end
 
 module Eat
+  # httpclient 2.2.3 inserts the platform info for you, albeit with problems
+  # AGENT_NAME = "Mozilla/5.0 (#{::RUBY_PLATFORM}) Ruby/#{::RUBY_VERSION} HTTPClient/#{::HTTPClient::VERSION} eat/#{::Eat::VERSION}"
+  AGENT_NAME = "eat/#{::Eat::VERSION}"
+
   module ObjectExtensions
-    AGENT_NAME = "Mozilla/5.0 (#{::RUBY_PLATFORM}) Ruby/#{::RUBY_VERSION} HTTPClient/#{::HTTPClient::VERSION} eat/#{::Eat::VERSION}"
-    
     # <tt>url</tt> can be filesystem or http/https
     #
     # Options:
@@ -57,11 +59,15 @@ module Eat
         if uri.scheme == 'https'
           http.ssl_config.verify_mode = openssl_verify_mode
         end
-        catch :stop do
-          http.get_content(uri.to_s) do |chunk|
-            body << chunk
-            read_so_far += chunk.length
-            throw :stop if read_so_far > limit
+        if limit == ::Infinity
+          body << http.get_content(uri.to_s)
+        else
+          catch :stop do
+            http.get_content(uri.to_s) do |chunk|
+              body << chunk
+              read_so_far += chunk.length
+              throw :stop if read_so_far > limit
+            end
           end
         end
       end

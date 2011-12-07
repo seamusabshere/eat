@@ -82,4 +82,8 @@ class TestEat < Test::Unit::TestCase
   def test_satisfies_sites_that_require_user_agent
     assert eat('http://www.bestbuy.com').include?('images.bestbuy.com')
   end
+  
+  def test_more_chunks
+    assert eat('http://www.ebay.com/itm/ws/eBayISAPI.dll?ViewItem&item=260910713854?_trksid=p5197.m1256&_trkparms=clkid%3D4726644202417880745').include?('<title>')
+  end
 end
