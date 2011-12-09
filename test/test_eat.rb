@@ -86,4 +86,8 @@ class TestEat < Test::Unit::TestCase
   def test_more_chunks
     assert eat('http://www.ebay.com/itm/ws/eBayISAPI.dll?ViewItem&item=260910713854?_trksid=p5197.m1256&_trkparms=clkid%3D4726644202417880745').include?('<title>')
   end
+  
+  def test_ignores_anchor
+    assert eat('http://www.orbitgum.com/#/home').include?('Orbit')
+  end
 end
