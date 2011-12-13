@@ -90,4 +90,8 @@ class TestEat < Test::Unit::TestCase
   def test_ignores_anchor
     assert eat('http://www.orbitgum.com/#/home').include?('Orbit')
   end
+  
+  def test_relative_redirect_handling
+    assert eat("http://www.crutchfield.com/p_054D3100/Nikon-D3100-Kit.html").include?('Product Information')
+  end
 end

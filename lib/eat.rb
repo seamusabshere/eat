@@ -10,6 +10,17 @@ module Eat
   
   # http://weblog.jamisbuck.org/2007/2/7/infinity  
   INFINITY = 1.0/0
+  
+  # https://github.com/nahi/httpclient/blob/master/lib/httpclient.rb#L640
+  REDIRECT_HANDLER = ::Proc.new do |uri, res|
+    newuri = ::URI.parse(res.header['location'][0])
+    unless newuri.is_a?(::URI::HTTP)
+      newuri = uri + newuri
+    end
+    newuri
+  end
+  
+  TIMEOUT = 2
 
   module ObjectExtensions
     # <tt>url</tt> can be filesystem or http/https
@@ -44,14 +55,14 @@ module Eat
         end
 
       when 'http', 'https'
-        timeout = options.fetch(:timeout, 2)
+        timeout = options.fetch(:timeout, TIMEOUT)
         openssl_verify_mode = options.fetch(:openssl_verify_mode, ::OpenSSL::SSL::VERIFY_PEER)
         if openssl_verify_mode == 'none'
           openssl_verify_mode = ::OpenSSL::SSL::VERIFY_NONE
         end
         http = ::HTTPClient.new
         http.agent_name = AGENT_NAME
-        http.redirect_uri_callback = ::Proc.new { |uri, res| ::URI.parse(res.header['location'][0]) }
+        http.redirect_uri_callback = REDIRECT_HANDLER
         http.transparent_gzip_decompression = true
         http.receive_timeout = timeout
         if uri.scheme == 'https'
