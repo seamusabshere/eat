@@ -68,16 +68,20 @@ module Eat
         if uri.scheme == 'https'
           http.ssl_config.verify_mode = openssl_verify_mode
         end
-        if limit == INFINITY
-          body << http.get_content(uri.to_s)
-        else
-          catch :stop do
-            http.get_content(uri.to_s) do |chunk|
-              body << chunk
-              read_so_far += chunk.length
-              throw :stop if read_so_far > limit
+        begin
+          if limit == INFINITY
+            body << http.get_content(uri.to_s)
+          else
+            catch :stop do
+              http.get_content(uri.to_s) do |chunk|
+                body << chunk
+                read_so_far += chunk.length
+                throw :stop if read_so_far > limit
+              end
             end
           end
+        rescue ::HTTPClient::BadResponseError => e
+          body << [e.res.body]
         end
       end
 

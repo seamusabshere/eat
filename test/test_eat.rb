@@ -94,4 +94,8 @@ class TestEat < Test::Unit::TestCase
   def test_relative_redirect_handling
     assert eat("http://www.crutchfield.com/p_054D3100/Nikon-D3100-Kit.html").include?('Product Information')
   end
+
+  def test_returns_text_of_error_messages
+    assert eat('http://brighterplanet.com/oidjfasoidfsailudfj').include?('Not Found')
+  end
 end
